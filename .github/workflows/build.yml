@@ -16,11 +16,21 @@ jobs:
         with:
           gradle-version: 8.7
       - name: Zip kicsomagolása
-        run: unzip -oq TvLauncheER.zip -d proj
+        run: |
+          mkdir -p proj
+          for z in *.zip; do
+            if unzip -l "$z" | grep -q "logo_apple_music.xml"; then
+              echo "Találat: $z"
+              unzip -oq "$z" -d proj
+            fi
+          done
+          find proj -name settings.gradle.kts
       - name: APK építése
-        working-directory: proj/TvLauncher
-        run: gradle assembleDebug --no-daemon
+        run: |
+          DIR=$(dirname "$(find proj -name settings.gradle.kts | head -n 1)")
+          cd "$DIR"
+          gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: TvLauncher-apk
-          path: proj/TvLauncher/app/build/outputs/apk/debug/app-debug.apk
+          path: proj/**/app-debug.apk

@@ -1,34 +1,26 @@
 name: Build APK
-
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Zip kicsomagolasa
-        run: |
-          mkdir -p work
-          unzip -o -q "TvLauncheR.zip" -d work
-          find work -maxdepth 3 | head -40
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
-      - name: Build debug APK
-        run: |
-          F=$(find work -name settings.gradle.kts | head -n 1)
-          if [ -z "$F" ]; then echo "Nincs settings.gradle.kts a zipben!"; exit 1; fi
-          cd "$(dirname "$F")"
-          gradle assembleDebug --no-daemon
+      - name: Zip kicsomagolása
+        run: unzip -oq TvLauncheER.zip -d proj
+      - name: APK építése
+        working-directory: proj/TvLauncher
+        run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: TvLauncher-apk
-          path: "work/**/app-debug.apk"
+          path: proj/TvLauncher/app/build/outputs/apk/debug/app-debug.apk

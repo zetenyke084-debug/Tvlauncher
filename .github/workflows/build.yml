@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: TvLauncher
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v5
@@ -17,9 +20,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
+          build-root-directory: TvLauncher
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: TvLauncher-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: TvLauncher/app/build/outputs/apk/debug/app-debug.apk

@@ -19,7 +19,7 @@ jobs:
         run: |
           mkdir -p proj
           for z in *.zip; do
-            if unzip -l "$z" | grep -q "logo_apple_music.xml"; then
+            if unzip -l "$z" | grep -q "ic_person.xml"; then
               echo "Találat: $z"
               unzip -oq "$z" -d proj
             fi

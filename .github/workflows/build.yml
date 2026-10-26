@@ -13,9 +13,12 @@ jobs:
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: 8.7 }
-      - run: unzip TvLauncher.zip
-      - run: cd TvLauncher && gradle assembleDebug
+      - name: Build
+        run: |
+          for z in *.zip; do [ -f "$z" ] && unzip -o "$z"; done || true
+          cd "$(dirname "$(find . -name settings.gradle.kts | head -1)")"
+          gradle assembleDebug
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          files: TvLauncher/app/build/outputs/apk/debug/app-debug.apk
+          files: "**/app-debug.apk"
